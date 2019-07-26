@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mysql
+  name: mysql
+  namespace: airflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: mysql
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: mysql
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql
+        resources: {}
+        ports:
+          - containerPort: 3306
+        args:
+          - "--explicit-defaults-for-timestamp=1"
+        env:
+        - name: MYSQL_DATABASE
+          value: airflow
+        - name: MYSQL_ROOT_PASSWORD
+          value: toor
+        - name: MYSQL_USERNAME
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+      - image: apache/airflow:master
+        name: airflow-db-init
+        command: ['sh', '-c', 'until mysqladmin ping -h result-backend -u root --password=toor; do echo Waiting for result backend to start; sleep 1; done; airflow upgradedb; airflow users -c --username root --password $AIRFLOW_ROOT_PASSWORD --email root@root --role Admin --firstname root --lastname root']
+        env:
+          - name: AIRFLOW_ROOT_PASSWORD
+            value: toor
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            value: "mysql://root:toor@result-backend:3306/airflow"
+          - name: AIRFLOW__CELERY__RESULT_BACKEND
+            value: db+mysql://root:toor@result-backend:3306/airflow
+status: {}

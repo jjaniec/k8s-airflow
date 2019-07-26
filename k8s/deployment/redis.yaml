@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: redis
+  name: redis
+  namespace: airflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: redis
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: redis
+    spec:
+      containers:
+      - image: redis:alpine
+        name: redis
+        ports:
+          - containerPort: 6379
+        resources: {}
+status: {}

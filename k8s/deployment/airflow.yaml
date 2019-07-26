@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: airflow
+  name: airflow
+  namespace: airflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: airflow
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: airflow
+    spec:
+      containers:
+      - image: apache/airflow:master
+        name: airflow
+        resources: {}
+        ports:
+          - containerPort: 443
+          - containerPort: 80
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 8080
+        #   initialDelaySeconds: 20
+        #   periodSeconds: 5
+        env:
+        - name: AIRFLOW__CORE__EXECUTOR
+          value: CeleryExecutor
+        - name: AIRFLOW__CORE__DAGS_FOLDER
+          value: "{AIRFLOW_HOME}/dags"
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          value: "mysql://root:toor@result-backend:3306/airflow"
+        - name: AIRFLOW__CELERY__RESULT_BACKEND
+          value: db+mysql://root:toor@result-backend:3306/airflow
+        - name: AIRFLOW__CELERY__BROKER_URL
+          value: redis://broker:6379/1
+        command: ['sh', '-c', 'airflow scheduler & airflow webserver']
+      initContainers:
+        - image: mysql:5.7
+          name: backend-liveness-check
+          command: ['sh', '-c', 'until mysqladmin ping -h $RESULT_BACKEND_ADDRESS -u root --password=toor; do echo Waiting for result backend to start; sleep 1; done;']
+          env:
+            - name: RESULT_BACKEND_ADDRESS
+              value: "result-backend"
+status: {}
