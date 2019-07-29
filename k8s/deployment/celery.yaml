@@ -22,8 +22,6 @@ spec:
       - image: apache/airflow:master
         name: celery
         resources: {}
-        ports:
-          - containerPort: 3306
         env:
         - name: AIRFLOW__CORE__EXECUTOR
           value: CeleryExecutor

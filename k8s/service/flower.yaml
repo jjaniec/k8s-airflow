@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: flower
+  name: flower
+  namespace: airflow
+spec:
+  ports:
+  - name: flower
+    port: 5555
+    protocol: TCP
+    targetPort: 5555
+  selector:
+    run: flower
+  type: LoadBalancer
+status:
+  loadBalancer: {}

@@ -3,31 +3,31 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    run: airflow
-  name: airflow
+    run: flower
+  name: flower
   namespace: airflow
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: airflow
+      run: flower
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        run: airflow
+        run: flower
     spec:
       containers:
       - image: apache/airflow:master
-        name: airflow
+        name: flower
         resources: {}
         ports:
-          - containerPort: 8080
+          - containerPort: 5555
         livenessProbe:
           httpGet:
-            path: /api/experimental/test
-            port: 8080
+            path: /api/workers
+            port: 5555
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
@@ -41,7 +41,8 @@ spec:
           value: db+mysql://root:toor@result-backend:3306/airflow
         - name: AIRFLOW__CELERY__BROKER_URL
           value: redis://broker:6379/1
-        command: ['sh', '-c', 'airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver']
+        command: ["sh", "-c", "unset FLOWER_PORT && airflow flower"]
+        # ValueError: invalid literal for int() with base 10: 'tcp://10.12.7.84:5555'
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
