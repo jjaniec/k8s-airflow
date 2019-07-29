@@ -35,14 +35,4 @@ spec:
           value: user
         - name: MYSQL_PASSWORD
           value: password
-      - image: apache/airflow:master
-        name: airflow-db-init
-        command: ['sh', '-c', 'until mysqladmin ping -h result-backend -u root --password=toor; do echo Waiting for result backend to start; sleep 1; done; airflow upgradedb; airflow users -c --username root --password $AIRFLOW_ROOT_PASSWORD --email root@root --role Admin --firstname root --lastname root']
-        env:
-          - name: AIRFLOW_ROOT_PASSWORD
-            value: toor
-          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-            value: "mysql://root:toor@result-backend:3306/airflow"
-          - name: AIRFLOW__CELERY__RESULT_BACKEND
-            value: db+mysql://root:toor@result-backend:3306/airflow
 status: {}

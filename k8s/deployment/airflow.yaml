@@ -24,7 +24,7 @@ spec:
         resources: {}
         ports:
           - containerPort: 443
-          - containerPort: 80
+          - containerPort: 8080
         # livenessProbe:
         #   httpGet:
         #     path: /
@@ -42,7 +42,7 @@ spec:
           value: db+mysql://root:toor@result-backend:3306/airflow
         - name: AIRFLOW__CELERY__BROKER_URL
           value: redis://broker:6379/1
-        command: ['sh', '-c', 'airflow scheduler & airflow webserver']
+        command: ['sh', '-c', 'airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver']
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
