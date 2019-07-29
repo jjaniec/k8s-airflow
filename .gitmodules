@@ -1,3 +1,0 @@
-[submodule "src/prometheus-operator"]
-	path = src/prometheus-operator
-	url = https://github.com/coreos/prometheus-operator.git

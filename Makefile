@@ -1,14 +1,24 @@
 PROM_OPERATOR_NAMESPACE?=airflow
+KUBECTL=kubectl
 
 SRC_DIR=src
 
+all: deploy
+
 deploy:
-	kubectl apply -f $(SRC_DIR)/namespace.yaml
-	kubectl apply -R -f $(SRC_DIR)/mysql
-	kubectl apply -R -f $(SRC_DIR)/redis
-	kubectl apply -R -f $(SRC_DIR)/airflow
-	kubectl apply -R -f $(SRC_DIR)/flower
-	kubectl apply -R -f $(SRC_DIR)/celery
+	$(KUBECTL) apply -f $(SRC_DIR)/namespace.yaml
+	$(KUBECTL) apply -R -f $(SRC_DIR)/mysql
+	$(KUBECTL) apply -R -f $(SRC_DIR)/redis
+	$(KUBECTL) apply -R -f $(SRC_DIR)/airflow
+	$(KUBECTL) apply -R -f $(SRC_DIR)/flower
+	$(KUBECTL) apply -R -f $(SRC_DIR)/celery
 
-	cat $(SRC_DIR)/prometheus-operator/bundle.yaml | sed 's/namespace: default/namespace: $(PROM_OPERATOR_NAMESPACE)/g' | kubectl apply -f -
+	$(KUBECTL) apply -R -f src/prometheus-operator
 
+fclean:
+	kubectl delete all --all -n airflow
+
+re: fclean all
+
+tests: deploy
+	echo "TODO"

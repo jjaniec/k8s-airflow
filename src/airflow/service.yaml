@@ -9,11 +9,9 @@ metadata:
 spec:
   ports:
   - name: airflow-http
-    port: 80
+    port: 8080
     protocol: TCP
     targetPort: 8080
   selector:
     run: airflow
   type: LoadBalancer
-status:
-  loadBalancer: {}
