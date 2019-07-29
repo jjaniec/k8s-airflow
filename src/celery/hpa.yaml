@@ -12,6 +12,3 @@ spec:
     kind: Deployment
     name: celery
   targetCPUUtilizationPercentage: 50
-status:
-  currentReplicas: 0
-  desiredReplicas: 0
