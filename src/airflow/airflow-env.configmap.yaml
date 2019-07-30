@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  AIRFLOW__CORE__EXECUTOR: KubernetesExecutor
+  AIRFLOW__CORE__DAGS_FOLDER: "{AIRFLOW_HOME}/dags"
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN: "mysql://root:toor@result-backend:3306/airflow"
+  AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://root:toor@result-backend:3306/airflow
+  AIRFLOW__CELERY__BROKER_URL: redis://broker:6379/1
+  AIRFLOW__KUBERNETES__NAMESPACE: airflow
+  AIRLFOW__KUBERNETES__AIRFLOW_CONFIGMAP: airflow-cfg
+  AIRFLOW__KUBERNETES__GIT_SUBPATH: dags
+  AIRFLOW__KUBERNETES__GIT_DAGS_FOLDER_MOUNT_POINT: "{AIRFLOW_HOME}/dags"
+  AIRFLOW__KUBERNETES__WORKER_SERVICE_ACCOUNT_NAME: airflow
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: airflow-env
+  namespace: airflow
