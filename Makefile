@@ -13,7 +13,8 @@ deploy:
 	$(KUBECTL) apply -R -f $(SRC_DIR)/flower
 	$(KUBECTL) apply -R -f $(SRC_DIR)/celery
 
-	$(KUBECTL) apply -R -f src/prometheus-operator
+	$(KUBECTL) apply -R -f src/prometheus_operator
+	$(KUBECTL) apply -R -f src/grafana
 
 fclean:
 	kubectl delete all --all -n airflow

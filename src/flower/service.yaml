@@ -8,7 +8,7 @@ metadata:
   namespace: airflow
 spec:
   ports:
-  - name: flower
+  - name: flower-http
     port: 5555
     protocol: TCP
     targetPort: 5555
