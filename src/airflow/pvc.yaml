@@ -5,21 +5,23 @@ metadata:
   namespace: airflow
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
   volumeMode: Filesystem
   resources:
     requests:
       storage: 8Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: airflow-logs
-  namespace: airflow
-spec:
-  accessModes:
-    - ReadWriteMany
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 8Gi
+  storageClassName: airflow
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: airflow-logs
+#   namespace: airflow
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   volumeMode: Filesystem
+#   resources:
+#     requests:
+#       storage: 8Gi
+#   storageClassName: airflow

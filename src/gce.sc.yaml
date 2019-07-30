@@ -1,11 +1,13 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: gce-pd
+  name: airflow
   namespace: airflow
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
+  labels:
+    provisioner: gce
+    addonmanager.kubernetes.io/mode: EnsureExists
 provisioner: kubernetes.io/gce-pd
 parameters:
   type: pd-standard
   replication-type: none
+allowVolumeExpansion: true

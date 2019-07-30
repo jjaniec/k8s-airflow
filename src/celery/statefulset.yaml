@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   creationTimestamp: null
   labels:
@@ -7,11 +7,11 @@ metadata:
   name: celery
   namespace: airflow
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       run: celery
-  strategy: {}
+  serviceName: "celery"
   template:
     metadata:
       creationTimestamp: null
@@ -22,19 +22,9 @@ spec:
       - image: apache/airflow:master
         name: celery
         resources: {}
-        env:
-        - name: AIRFLOW__CORE__EXECUTOR
-          value: CeleryExecutor
-        - name: AIRFLOW__CORE__DAGS_FOLDER
-          value: "{AIRFLOW_HOME}/dags"
-        - name: AIRFLOW__CELERY__WORKER_CONCURRENCY
-          value: "10"
-        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-          value: mysql://root:toor@result-backend:3306/airflow
-        - name: AIRFLOW__CELERY__RESULT_BACKEND
-          value: db+mysql://root:toor@result-backend:3306/airflow
-        - name: AIRFLOW__CELERY__BROKER_URL
-          value: redis://broker:6379/1
+        envFrom:
+        - configMapRef:
+            name: airflow-env
         command: ['sh', '-c', 'airflow worker']
         ports:
           - containerPort: 8793
@@ -45,4 +35,3 @@ spec:
           env:
             - name: RESULT_BACKEND_ADDRESS
               value: "result-backend"
-status: {}

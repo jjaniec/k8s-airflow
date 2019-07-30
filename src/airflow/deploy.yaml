@@ -33,7 +33,7 @@ spec:
         command:
           - bash
           - -c
-          - 'env; airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver'
+          - 'airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver'
         # volumeMounts:
         #   - readOnly: true
         #     name: airflow-cfg
@@ -45,12 +45,12 @@ spec:
         - secretRef:
             name: airflow-secrets
         volumeMounts:
-          - readOnly: false
+          - readOnly: true
             mountPath: /home/airflow/airflow/dags
             name: airflow-dags
-          - readOnly: false
-            mountPath: /home/airflow/airflow/logs
-            name: airflow-logs
+        #   - readOnly: false
+        #     mountPath: /home/airflow/airflow/logs
+        #     name: airflow-logs
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
@@ -65,8 +65,8 @@ spec:
         - name: airflow-dags
           persistentVolumeClaim:
             claimName: airflow-dags
-        - name: airflow-logs
-          persistentVolumeClaim:
-            claimName: airflow-logs
+        # - name: airflow-logs
+        #   persistentVolumeClaim:
+        #     claimName: airflow-logs
       serviceAccountName: airflow
 status: {}
