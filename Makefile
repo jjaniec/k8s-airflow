@@ -6,7 +6,9 @@ SRC_DIR=src
 all: deploy
 
 deploy:
-	$(KUBECTL) apply -f $(SRC_DIR)/namespace.yaml
+	$(KUBECTL) apply -f $(SRC_DIR)/ns.yaml
+	$(KUBECTL) apply -f $(SRC_DIR)/gce.sc.yaml
+
 	$(KUBECTL) apply -R -f $(SRC_DIR)/mysql
 	$(KUBECTL) apply -R -f $(SRC_DIR)/redis
 	$(KUBECTL) apply -R -f $(SRC_DIR)/airflow

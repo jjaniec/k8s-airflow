@@ -44,6 +44,13 @@ spec:
             name: airflow-env
         - secretRef:
             name: airflow-secrets
+        volumeMounts:
+          - readOnly: false
+            mountPath: /home/airflow/airflow/dags
+            name: airflow-dags
+          - readOnly: false
+            mountPath: /home/airflow/airflow/logs
+            name: airflow-logs
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
@@ -55,5 +62,11 @@ spec:
         - name: airflow-cfg
           configMap:
             name: airflow-cfg
+        - name: airflow-dags
+          persistentVolumeClaim:
+            claimName: airflow-dags
+        - name: airflow-logs
+          persistentVolumeClaim:
+            claimName: airflow-logs
       serviceAccountName: airflow
 status: {}
