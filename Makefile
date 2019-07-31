@@ -3,7 +3,10 @@ KUBECTL=kubectl
 
 SRC_DIR=src
 
-all: deploy
+all: deploy flannel
+
+flannel:
+	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 deploy:
 	$(KUBECTL) apply -f $(SRC_DIR)/ns.yaml
@@ -16,6 +19,7 @@ deploy:
 	$(KUBECTL) apply -R -f $(SRC_DIR)/celery
 
 	$(KUBECTL) apply -R -f src/prometheus_operator
+	$(KUBECTL) apply -R -f src/prometheus
 	$(KUBECTL) apply -R -f src/grafana
 
 fclean:

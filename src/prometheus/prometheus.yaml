@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-frontend
+  labels:
+    prometheus: prometheus
+  namespace: airflow
+spec:
+  replicas: 1
+  serviceAccountName: prometheus
+  # serviceMonitorSelector:
+  #   matchLabels:
+  #     app: airflow
+  serviceMonitors:
+  - selector:
+      matchLabels:
+        app: service-monitor
+  namespaceSelector:
+    matchNames:
+    - airflow
+  enableAdminAPI: false
+  # alerting:
+  #   alertmanagers:
+  #   - namespace: airflow
+  #     name: alertmanager
+  #     port: web

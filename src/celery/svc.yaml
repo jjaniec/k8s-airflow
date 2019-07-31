@@ -3,15 +3,15 @@ kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    app: grafana
-  name: grafana
+    app: celery
+  name: celery
   namespace: airflow
 spec:
   ports:
-  - name: grafana-http
-    port: 3000
+  - name: celery-http
+    port: 8793
     protocol: TCP
-    targetPort: 3000
+    targetPort: 8793
   selector:
-    run: grafana
-  type: LoadBalancer
+    run: celery
+  type: ClusterIP

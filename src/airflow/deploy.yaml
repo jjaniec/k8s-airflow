@@ -17,13 +17,17 @@ spec:
       creationTimestamp: null
       labels:
         run: airflow
+      # annotations:
+      #   prometheus.io/scrape: "true"
+      #   prometheus.io/port: "8080"
     spec:
       containers:
-      - image: apache/airflow:master
+      - image: jjaniec/airflow-exporter
         name: airflow
         resources: {}
         ports:
           - containerPort: 8080
+            name: airflow-http
         livenessProbe:
           httpGet:
             path: /api/experimental/test
@@ -69,4 +73,3 @@ spec:
         #   persistentVolumeClaim:
         #     claimName: airflow-logs
       serviceAccountName: airflow
-status: {}

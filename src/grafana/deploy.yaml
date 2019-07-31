@@ -5,6 +5,7 @@ metadata:
   labels:
     run: grafana
   name: grafana
+  namespace: airflow
 spec:
   replicas: 1
   selector:

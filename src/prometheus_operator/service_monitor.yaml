@@ -10,5 +10,20 @@ spec:
   selector:
     matchLabels:
       app: airflow
+  namespaceSelector:
+    matchNames:
+    - airflow
+  # endpoints:
+  # - honorLabels: true
+    # port: http
   endpoints: 
   - port: airflow-http
+    interval: 5s
+    path: admin/metrics/
+    basicAuth: 
+      user:
+        key: user
+        name: airflow-auth
+      password:
+        key: password
+        name: airflow-auth
