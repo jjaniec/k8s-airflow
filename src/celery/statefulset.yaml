@@ -7,7 +7,7 @@ metadata:
   name: celery
   namespace: airflow
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       run: celery
