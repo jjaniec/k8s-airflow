@@ -5,28 +5,25 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/version: v0.31.1
-    app: airflow
-    team: frontend
-    service-monitor: airflow
-  name: prometheus-operator
+    monitors: airflow
+  name: airflow
   namespace: airflow
 spec:
   selector:
     matchLabels:
-      app: airflow
+      run: airflow
   namespaceSelector:
     matchNames:
     - airflow
-  # endpoints:
-  # - honorLabels: true
-    # port: http
   endpoints: 
   - port: airflow-http
     honorLabels: true
+    targetPort: airflow-http
+    name: airflow-http
     interval: 5s
-    path: /admin/metrics/
-    basicAuth: 
-      user:
+    path: /admin/metrics
+    basicAuth:
+      username:
         key: user
         name: airflow-auth
       password:

@@ -3,15 +3,15 @@ kind: Prometheus
 metadata:
   name: prometheus
   namespace: airflow
-  labels:
-    prometheus: prometheus
 spec:
   replicas: 2
+  enableAdminAPI: true
+  logLevel: info
   serviceAccountName: prometheus
   serviceMonitorSelector:
     matchLabels:
-      team: frontend
-  namespaceSelector:
+      monitors: airflow
+  serviceMonitorNamespaceSelector:
     matchNames:
     - airflow
   # alerting:
@@ -19,35 +19,3 @@ spec:
   #   - namespace: airflow
   #     name: alertmanager
   #     port: web
-
-# apiVersion: monitoring.coreos.com/v1
-# kind: Prometheus
-# metadata:
-#   name: prometheus
-#   labels:
-#     app: prometheus
-#     prometheus: prometheus
-#   namespace: airflow
-# spec:
-#   replicas: 2
-#   serviceAccountName: prometheus
-#   baseImage: quay.io/prometheus/prometheus
-#   logLevel: info
-#   paused: false
-#   enableAdminAPI: true
-#   serviceMonitorSelector:
-#     matchLabels:
-#       service-monitor: airflow
-#   # serviceMonitors:
-#   # - selector:
-#   #     matchLabels:
-#   #       app: service-monitor
-#   namespaceSelector:
-#     matchNames:
-#     - airflow
-#   # enableAdminAPI: false
-#   # alerting:
-#   #   alertmanagers:
-#   #   - namespace: airflow
-#   #     name: alertmanager
-#   #     port: web

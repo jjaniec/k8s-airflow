@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  namespace: airflow
+  # namespace: airflow
   labels:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator

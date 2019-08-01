@@ -9,13 +9,8 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - name: web
+  - name: http
     port: 9090
     protocol: TCP
-    # targetPort: web
   selector:
     prometheus: prometheus
-    # namespace: airflow
-  # namespaceSelector:
-  #   matchNames:s
-  #   - airflow
