@@ -1,26 +1,53 @@
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
-  name: prometheus-frontend
+  name: prometheus
+  namespace: airflow
   labels:
     prometheus: prometheus
-  namespace: airflow
 spec:
-  replicas: 1
+  replicas: 2
   serviceAccountName: prometheus
-  # serviceMonitorSelector:
-  #   matchLabels:
-  #     app: airflow
-  serviceMonitors:
-  - selector:
-      matchLabels:
-        app: service-monitor
+  serviceMonitorSelector:
+    matchLabels:
+      team: frontend
   namespaceSelector:
     matchNames:
     - airflow
-  enableAdminAPI: false
   # alerting:
   #   alertmanagers:
   #   - namespace: airflow
   #     name: alertmanager
   #     port: web
+
+# apiVersion: monitoring.coreos.com/v1
+# kind: Prometheus
+# metadata:
+#   name: prometheus
+#   labels:
+#     app: prometheus
+#     prometheus: prometheus
+#   namespace: airflow
+# spec:
+#   replicas: 2
+#   serviceAccountName: prometheus
+#   baseImage: quay.io/prometheus/prometheus
+#   logLevel: info
+#   paused: false
+#   enableAdminAPI: true
+#   serviceMonitorSelector:
+#     matchLabels:
+#       service-monitor: airflow
+#   # serviceMonitors:
+#   # - selector:
+#   #     matchLabels:
+#   #       app: service-monitor
+#   namespaceSelector:
+#     matchNames:
+#     - airflow
+#   # enableAdminAPI: false
+#   # alerting:
+#   #   alertmanagers:
+#   #   - namespace: airflow
+#   #     name: alertmanager
+#   #     port: web

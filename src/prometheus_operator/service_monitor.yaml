@@ -1,10 +1,14 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: airflow-service-monitor
   labels:
-    app: service-monitor
-    monitors: airflow
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: prometheus-operator
+    app.kubernetes.io/version: v0.31.1
+    app: airflow
+    team: frontend
+    service-monitor: airflow
+  name: prometheus-operator
   namespace: airflow
 spec:
   selector:
@@ -18,8 +22,9 @@ spec:
     # port: http
   endpoints: 
   - port: airflow-http
+    honorLabels: true
     interval: 5s
-    path: admin/metrics/
+    path: /admin/metrics/
     basicAuth: 
       user:
         key: user

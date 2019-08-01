@@ -15,11 +15,11 @@ spec:
       app.kubernetes.io/name: prometheus-operator
   template:
     metadata:
+      namespace: airflow
       labels:
         app.kubernetes.io/component: controller
         app.kubernetes.io/name: prometheus-operator
         app.kubernetes.io/version: v0.31.1
-      namespace: airflow
     spec:
       containers:
       - args:
