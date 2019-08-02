@@ -8,7 +8,8 @@ data:
     rules:
     - seriesQuery: 'airflow_dag_status{status="running"}'
       metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>})'
-
+    resourceRules:
+      window: 5s
 
     # - seriesQuery: '{__name__=~"^container_.*",container_name!="POD",namespace!="",pod_name!=""}'
     #   seriesFilters: []
