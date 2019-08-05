@@ -27,6 +27,7 @@ spec:
         - --logtostderr=true
         - --prometheus-url=http://prometheus.airflow.svc:9090/
         - --metrics-relist-interval=1m
+        # - --kubelet-insecure-tls
         # - --rate-interval=60s
         - --v=10
         - --config=/etc/adapter/config.yaml

@@ -6,12 +6,14 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - "*"
   - namespaces
   - pods
   - services
   - nodes
   - pods
   verbs:
+  - "*"
   - get
   - list
   - watch

@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   creationTimestamp: null
@@ -11,4 +11,12 @@ spec:
     apiVersion: extensions/v1beta1
     kind: Deployment
     name: celery
-  targetCPUUtilizationPercentage: 50
+  metrics:
+  - type: Object
+    object:
+      target:
+        kind: Service
+        name: custom-metrics-apiserver
+      metricName: airflow_dag_status
+      targetValue: 1
+  # targetCPUUtilizationPercentage: 50
