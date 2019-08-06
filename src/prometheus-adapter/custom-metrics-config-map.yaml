@@ -6,6 +6,16 @@ metadata:
 data:
   config.yaml: |
     rules:
+    - seriesQuery: 'airflow_dag_status{status="running",namespace!="",pod!="",service!="",}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+          service: {resource: "service"}
+      name:
+        matches: "^airflow_dag_status"
+        as: "${1}_running"
+      metricsQuery: 'sum(airflow_dag_status{<<.LabelMatchers>>})'
     - seriesQuery: '{__name__=~"^container_.*",container_name!="POD",namespace!="",pod_name!=""}'
       seriesFilters: []
       resources:
@@ -96,6 +106,27 @@ data:
               resource: pod
         containerLabel: container_name
       window: 1m
+    # externalRules:
+    # - seriesQuery: 'http_requests_total{namespace!="",pod!=""}'
+    #   resources:
+    #     overrides:
+    #       namespace: {resource: "namespace"}
+    #       pod: {resource: "pod"}
+    #       service: {resource: "service"}
+    #   name:
+    #     matches: "^(.*)_total"
+    #     as: "${1}_per_second"      
+    #   metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)'
+    # - seriesQuery: 'airflow_dag_status{status="running"}'
+    #   resources:
+    #     overrides:
+    #       namespace: {resource: "namespace"}
+    #       pod: {resource: "pod"}
+    #       service: {resource: "service"}
+    #   # name:
+    #   #   as: airflow_dag_status_running
+    #   metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>})'
+
     # - seriesQuery: 'airflow_dag_status'
     #   metricsQuery: 'sum(<<.Series>>{status="running"})'
     #   # name:

@@ -41,6 +41,7 @@ custom-metrics-api-certs-cm:
 # 	openssl req -x509 -sha256 -new -nodes -days 365 -newkey rsa:2048 -keyout src/prometheus-adapter/serving.key -out src/prometheus-adapter/serving.crt -subj "/CN=ca"
 
 deploy: init flannel airflow metrics
+	$(KUBECTL) apply $(KUBECTL_OPT) -f src/ingress.yaml
 
 clean:
 	make -C src/prometheus-adapter clean

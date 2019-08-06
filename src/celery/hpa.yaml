@@ -8,15 +8,29 @@ spec:
   maxReplicas: 10
   minReplicas: 1
   scaleTargetRef:
-    apiVersion: extensions/v1beta1
-    kind: Deployment
+    apiVersion: apps/v1
+    kind: StatefulSet
     name: celery
   metrics:
   - type: Object
     object:
       target:
         kind: Service
-        name: custom-metrics-apiserver
+        name: airflow
       metricName: airflow_dag_status
-      targetValue: 1
+      targetValue: 10
+
+  # - type: Pods
+  #   pods:
+  #     metricName: airflow_dag_status
+  #     targetAverageValue: 5
+  #     selector:
+  #       namespace: airflow
+  # - type: Object
+  #   object:
+  #     target:
+  #       kind: Service
+  #       name: custom-metrics-apiserver
+  #     metricName: airflow_dag_status
+  #     targetValue: 1
   # targetCPUUtilizationPercentage: 50
