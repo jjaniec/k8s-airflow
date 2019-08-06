@@ -17,8 +17,9 @@ spec:
       target:
         kind: Service
         name: airflow
-      metricName: airflow_dag_status
-      targetValue: 10
+      metricName: airflow_task_status_running
+      averageValue: 1 # Used for a scaling in trigger
+      targetValue: 5 # Scale out
 
   # - type: Pods
   #   pods:

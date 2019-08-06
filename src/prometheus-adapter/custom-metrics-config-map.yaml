@@ -6,16 +6,35 @@ metadata:
 data:
   config.yaml: |
     rules:
-    - seriesQuery: 'airflow_dag_status{status="running",namespace!="",pod!="",service!="",}'
+    - seriesQuery: 'airflow_task_status{namespace!="",service!=""}'
       resources:
         overrides:
           namespace: {resource: "namespace"}
-          pod: {resource: "pod"}
+          service: {resource: "service"}
+      name:
+        matches: "^airflow_task_status"
+        as: "airflow_task_status_running"
+      metricsQuery: 'sort(sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace, service) or up{<<.LabelMatchers>>} - 1)'
+      # metricsQuery: 'absent(sum(airflow_task_status{namespace="airflow",service="airflow",status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace,service)) or sum(airflow_task_status{namespace="airflow",service="airflow",status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace,service)'
+      # metricsQuery: 'sum(airflow_task_status{namespace="airflow",service="airflow",status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace,service) or up{}'
+      # Warning ! We would normally do something like sum(airflow_dag_status{status="running"}) here to get only the number of running tasks,
+      # but the prometheus-adapter does not works this way as it's using the 'Element' field in the query response,
+      # instead it returns a count of all the metrics matching the series pattern.
+      #
+      # Note on the 'or sort() trick': using only the query to get the current pending tasks count
+      # when no tasks are pending makes the custom-metrics server return a 404,
+      # as an hpa doesn't understand 404 responses as '0' values,
+      # the 'or up' hack make it so the custom-metrics server always returns something
+      # and the sort is here to make sure the up() is not threated instead of the sum of our tasks
+    - seriesQuery: 'airflow_dag_status{namespace!="",service!=""}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
           service: {resource: "service"}
       name:
         matches: "^airflow_dag_status"
-        as: "${1}_running"
-      metricsQuery: 'sum(airflow_dag_status{<<.LabelMatchers>>})'
+        as: "airflow_dag_status_running"
+      metricsQuery: 'airflow_dag_status{<<.LabelMatchers>>,status="running"} or airflow_dag_status'
     - seriesQuery: '{__name__=~"^container_.*",container_name!="POD",namespace!="",pod_name!=""}'
       seriesFilters: []
       resources:
