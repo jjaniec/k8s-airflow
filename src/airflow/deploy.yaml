@@ -17,11 +17,16 @@ spec:
       creationTimestamp: null
       labels:
         run: airflow
-      # annotations:
-      #   prometheus.io/scrape: "true"
-      #   prometheus.io/port: "8080"
     spec:
       containers:
+      - image: tomwilkie/git-sync
+        name: git-sync
+        envFrom:
+        - secretRef:
+            name: git-sync-secrets
+        volumeMounts:
+          - name: airflow-dags
+            mountPath: /git
       - image: jjaniec/airflow-exporter
         name: airflow
         resources: {}
@@ -38,11 +43,6 @@ spec:
           - bash
           - -c
           - 'airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver'
-        # volumeMounts:
-        #   - readOnly: true
-        #     name: airflow-cfg
-        #     mountPath: /home/airflow/airflow/airflow.cfg
-        #     subPath: airflow.cfg
         envFrom:
         - configMapRef:
             name: airflow-env
@@ -52,9 +52,10 @@ spec:
           - readOnly: true
             mountPath: /home/airflow/airflow/dags
             name: airflow-dags
-        #   - readOnly: false
-        #     mountPath: /home/airflow/airflow/logs
-        #     name: airflow-logs
+          # - readOnly: true
+          #   name: airflow-cfg
+          #   mountPath: /home/airflow/airflow/airflow.cfg
+          #   subPath: airflow.cfg
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
@@ -63,13 +64,9 @@ spec:
             - name: RESULT_BACKEND_ADDRESS
               value: "result-backend"
       volumes:
+        - name: airflow-dags
+          emptyDir: {}
         - name: airflow-cfg
           configMap:
             name: airflow-cfg
-        - name: airflow-dags
-          persistentVolumeClaim:
-            claimName: airflow-dags
-        # - name: airflow-logs
-        #   persistentVolumeClaim:
-        #     claimName: airflow-logs
       serviceAccountName: airflow

@@ -27,7 +27,9 @@ spec:
             name: airflow-env
         command: ['sh', '-c', 'airflow worker']
         ports:
-          - containerPort: 8793
+          - name: celery-http
+            containerPort: 8793
+            protocol: TCP
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
