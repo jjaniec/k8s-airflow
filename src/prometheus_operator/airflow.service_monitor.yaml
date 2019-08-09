@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/version: v0.31.1
     monitors: airflow
+    app: service-monitor
   name: airflow
   namespace: airflow
 spec:

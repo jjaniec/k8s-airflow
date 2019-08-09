@@ -36,11 +36,13 @@ custom-metrics-api-certs-cm:
 	make -C src/prometheus-adapter
 	# kubectl create secret generic -n custom-metrics --from-file src/prometheus-adapter/serving.key --from-file src/prometheus-adapter/serving.crt -o yaml --dry-run cm-adapter-serving-certs > src/prometheus-adapter/adapter-serving-certs.cm.yaml
 
+cadvisor:
+	make -C ./src/cadvisor all
 
 # src/prometheus-adapter/serving.key:
 # 	openssl req -x509 -sha256 -new -nodes -days 365 -newkey rsa:2048 -keyout src/prometheus-adapter/serving.key -out src/prometheus-adapter/serving.crt -subj "/CN=ca"
 
-deploy: init flannel airflow metrics
+deploy: init flannel airflow metrics cadvisor
 	$(KUBECTL) apply $(KUBECTL_OPT) -f src/ingress.yaml
 
 clean:
@@ -49,6 +51,7 @@ clean:
 fclean: clean
 	kubectl delete all --all -n airflow
 	kubectl delete all --all -n custom-metrics
+	make -C src/cadvisor fclean
 	# rm -rf src/prometheus-adapter/serving.key src/prometheus-adapter/serving.crt
 
 re: fclean all

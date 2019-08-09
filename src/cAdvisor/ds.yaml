@@ -42,7 +42,7 @@ spec:
           mountPath: /dev/disk
           readOnly: true
         ports:
-          - name: http
+          - name: cadvisor-http
             containerPort: 8080
             protocol: TCP
       automountServiceAccountToken: false

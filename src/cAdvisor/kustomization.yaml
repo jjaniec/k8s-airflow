@@ -10,3 +10,5 @@ resources:
 - ns.yaml
 - podsecuritypolicy.yaml
 - sa.yaml
+- svc.yaml
+- pc.yaml

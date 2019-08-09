@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: prometheus-operator
+    app.kubernetes.io/version: v0.31.1
+    monitors: cadvisor
+    app: service-monitor
+  name: cadvisor
+  namespace: cadvisor
+spec:
+  selector:
+    matchLabels:
+      app: cadvisor
+  namespaceSelector:
+    matchNames:
+    - cadvisor
+  endpoints: 
+  - port: cadvisor-http
+    honorLabels: true
+    targetPort: cadvisor-http
+    name: cadvisor-http
+    interval: 5s
+    path: /metrics

@@ -10,10 +10,13 @@ spec:
   serviceAccountName: prometheus
   serviceMonitorSelector:
     matchLabels:
-      monitors: airflow
+      app: service-monitor
+    # matchLabels:
+      # monitors: airflow
   serviceMonitorNamespaceSelector:
     matchNames:
     - airflow
+    - cadvisor
   # alerting:
   #   alertmanagers:
   #   - namespace: airflow

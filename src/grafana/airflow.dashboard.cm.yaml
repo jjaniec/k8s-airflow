@@ -164,7 +164,7 @@ data:
         ]
       },
       "timezone": "",
-      "title": "New dashboard",
+      "title": "Airflow dashboard",
       "uid": null,
       "version": 0
     }
