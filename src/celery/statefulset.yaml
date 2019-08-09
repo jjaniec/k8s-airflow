@@ -29,7 +29,10 @@ spec:
             mountPath: /git
       - image: apache/airflow:master
         name: celery
-        resources: {}
+        resources:
+          requests:
+            cpu: "1"
+            memory: "1024m"
         envFrom:
         - configMapRef:
             name: airflow-env

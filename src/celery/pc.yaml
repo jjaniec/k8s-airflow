@@ -1,0 +1,9 @@
+apiVersion: scheduling.k8s.io/v1beta1
+kind: PriorityClass
+metadata:
+  creationTimestamp: null
+  name: celery
+  namespace: airflow
+value: 0
+globalDefault: false
+description: "Celery pods priority class from eviction"

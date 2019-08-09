@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: grafana-datasources
+  namespace: airflow
+data:
+  prometheus.yaml: |
+    apiVersion: 1
+
+    datasources:
+    - name: airflow-prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus.airflow.svc.cluster.local:9090
+      isDefault: true
+      version: 1
+      editable: true

@@ -29,7 +29,10 @@ spec:
             mountPath: /git
       - image: jjaniec/airflow-exporter
         name: airflow
-        resources: {}
+        resources:
+          requests:
+            cpu: 0.5
+            memory: "2048m"
         ports:
           - containerPort: 8080
             name: airflow-http
@@ -70,3 +73,4 @@ spec:
           configMap:
             name: airflow-cfg
       serviceAccountName: airflow
+      priorityClassName: airflow

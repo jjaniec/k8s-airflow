@@ -1,0 +1,9 @@
+apiVersion: scheduling.k8s.io/v1beta1
+kind: PriorityClass
+metadata:
+  creationTimestamp: null
+  name: airflow
+  namespace: airflow
+value: 100
+globalDefault: false
+description: "Airflow pods priority class from eviction"

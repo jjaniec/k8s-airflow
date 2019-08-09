@@ -21,6 +21,29 @@ spec:
       containers:
       - image: grafana/grafana
         name: grafana
-        resources: {}
+        resources:
+          requests:
+            cpu: 0.25
+            memory: "1024m"
         ports:
           - containerPort: 3000
+        volumeMounts:
+          - name: dashboards
+            mountPath: /etc/grafana/provisioning/dashboards/dashboards.yaml
+            subPath: dashboards.yaml
+          - name: airflow-dashboard
+            mountPath: /etc/grafana/dashboards/airflow.json
+            subPath: airflow.json
+          - name: datasources
+            mountPath: /etc/grafana/provisioning/datasources/prometheus.yaml
+            subPath: prometheus.yaml
+      volumes:
+        - name: dashboards
+          configMap:
+            name: grafana-dashboards
+        - name: airflow-dashboard
+          configMap:
+            name: grafana-airflow-dashboard
+        - name: datasources
+          configMap:
+            name: grafana-datasources
