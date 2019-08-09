@@ -1,9 +1,8 @@
 PURPOSE:=custom-metrics
 SERVICE_NAME:=custom-metrics-apiserver
 ALT_NAMES:="custom-metrics-apiserver.custom-metrics","custom-metrics-apiserver.custom-metrics.svc"
-SECRET_FILE:=adapter-serving-certs.secret.yaml
 
-all: certs secret_file clean
+all: certs clean
 
 certs:
 	@echo Generating TLS certs
@@ -32,19 +31,6 @@ certs:
 	# 		-v ${PWD}/certs:/go/src/github.com/cloudflare/cfssl/certs \
 	# 		-i \
 	# 		cfssl/cfssl -bare certs/apiserver
-
-secret_file: $(SECRET_FILE)
-
-$(SECRET_FILE): certs
-	mv certs/apiserver.pem certs/serving.crt
-	mv certs/apiserver-key.pem certs/serving.key
-	kubectl create secret generic \
-		-n custom-metrics \
-		--from-file certs/serving.key \
-		--from-file certs/serving.crt \
-		-o yaml \
-		--dry-run \
-		cm-adapter-serving-certs > $(SECRET_FILE)
 
 clean:
 	rm -rf certs $(PURPOSE)-ca-config.json $(PURPOSE)-ca.crt $(PURPOSE)-ca.key
