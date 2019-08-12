@@ -18,18 +18,26 @@ spec:
       labels:
         run: flower
     spec:
+      priorityClassName: flower
       containers:
       - image: apache/airflow:master
         name: flower
-        resources: {}
         ports:
           - containerPort: 5555
+            name: flower-http
         livenessProbe:
           httpGet:
             path: /api/workers
-            port: 5555
-          initialDelaySeconds: 30
+            port: flower-http
+          initialDelaySeconds: 20
           periodSeconds: 5
+        resources:
+          requests:
+            cpu: 0.25
+            memory: "512Mi"
+          limits:
+            cpu: 0.5
+            memory: "1024Mi"
         env:
         - name: AIRFLOW__CORE__EXECUTOR
           value: CeleryExecutor

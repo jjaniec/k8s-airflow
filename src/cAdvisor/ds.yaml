@@ -13,18 +13,21 @@ spec:
     metadata:
       labels:
         name: cadvisor
+        app: cadvisor
     spec:
       serviceAccountName: cadvisor
       containers:
       - name: cadvisor
         image: k8s.gcr.io/cadvisor:v0.30.2
-        resources:
-          requests:
-            memory: 200Mi
-            cpu: 150m
-          limits:
-            memory: 2000Mi
-            cpu: 300m
+        # args:
+        # - --disable-metrics=disk
+        # resources:
+        #   requests:
+        #     memory: 200Mi
+        #     cpu: 150m
+        #   limits:
+        #     memory: 2000Mi
+        #     cpu: 300m
         volumeMounts:
         - name: rootfs
           mountPath: /rootfs
@@ -41,6 +44,12 @@ spec:
         - name: disk
           mountPath: /dev/disk
           readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: cadvisor-http
+          initialDelaySeconds: 20
+          periodSeconds: 5
         ports:
           - name: cadvisor-http
             containerPort: 8080

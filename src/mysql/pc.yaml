@@ -1,0 +1,7 @@
+apiVersion: scheduling.k8s.io/v1beta1
+kind: PriorityClass
+metadata:
+  creationTimestamp: null
+  name: mysql
+  namespace: airflow
+value: 200

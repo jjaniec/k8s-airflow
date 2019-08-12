@@ -24,4 +24,5 @@ spec:
         ports:
           - containerPort: 6379
         resources: {}
+      priorityClassName: redis
 status: {}

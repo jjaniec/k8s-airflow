@@ -18,6 +18,7 @@ spec:
       labels:
         run: mysql
     spec:
+      priorityClassName: mysql
       containers:
       - image: mysql:5.7
         name: mysql

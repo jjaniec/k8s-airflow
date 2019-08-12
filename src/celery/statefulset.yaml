@@ -27,12 +27,22 @@ spec:
         volumeMounts:
           - name: airflow-dags
             mountPath: /git
+        resources:
+          requests:
+            memory: 200Mi
+            cpu: 150m
+          limits:
+            memory: 500Mi
+            cpu: 300m
       - image: apache/airflow:master
         name: celery
         resources:
           requests:
-            cpu: "300m"
-            memory: "1024m"
+            cpu: 0.5
+            memory: "512Mi"
+          limits:
+            cpu: 1
+            memory: "2048Mi"
         envFrom:
         - configMapRef:
             name: airflow-env
