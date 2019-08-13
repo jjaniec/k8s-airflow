@@ -15,8 +15,6 @@ data:
         matches: "^airflow_task_status"
         as: "airflow_task_status_running"
       metricsQuery: 'sort(sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace, service) or up{<<.LabelMatchers>>} - 1)'
-      # metricsQuery: 'absent(sum(airflow_task_status{namespace="airflow",service="airflow",status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace,service)) or sum(airflow_task_status{namespace="airflow",service="airflow",status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace,service)'
-      # metricsQuery: 'sum(airflow_task_status{namespace="airflow",service="airflow",status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace,service) or up{}'
       # Warning ! We would normally do something like sum(airflow_dag_status{status="running"}) here to get only the number of running tasks,
       # but the prometheus-adapter does not works this way as it's using the 'Element' field in the query response,
       # instead it returns a count of all the metrics matching the series pattern.

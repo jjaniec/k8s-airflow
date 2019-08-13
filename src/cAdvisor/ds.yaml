@@ -44,12 +44,22 @@ spec:
         - name: disk
           mountPath: /dev/disk
           readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: cadvisor-http
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /metrics
+            path: /healthz
             port: cadvisor-http
+            scheme: HTTP
           initialDelaySeconds: 20
           periodSeconds: 5
+        args:
+          - --disable_metrics=disk
         ports:
           - name: cadvisor-http
             containerPort: 8080
