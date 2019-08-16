@@ -24,7 +24,7 @@ airflow:
 	$(KUBECTL) apply $(KUBECTL_OPT) -R -f $(SRC_DIR)/celery
 
 metrics: custom-metrics-api-certs-cm
-	$(KUBECTL) apply $(KUBECTL_OPT) -f src/metrics-server/
+	# $(KUBECTL) apply $(KUBECTL_OPT) -f src/metrics-server/
 	$(KUBECTL) apply $(KUBECTL_OPT) -R -f src/prometheus_operator
 	$(KUBECTL) apply $(KUBECTL_OPT) -R -f src/prometheus
 	@echo "Waiting for the Prometheus operators to create the TPRs/CRDs"

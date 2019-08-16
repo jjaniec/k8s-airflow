@@ -6,6 +6,18 @@ metadata:
 data:
   config.yaml: |
     rules:
+    - seriesQuery: '{namespace!="",__name__!=""}'
+      seriesFilters: []
+    # - seriesQuery: '(.*){namespace!="",service!=""}'
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          service: {resource: "service"}
+      name:
+        matches: "^.*"
+        as: "airflow_tasks_per_worker"
+      metricsQuery: 'ceil(max(sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace, service) / ignoring (namespace, service) group_left count(container_memory_usage_bytes{container_label_run="celery"}) by (namespace, service) or up - 1) by (namespace, service))'
+      # https://github.com/DirectXMan12/k8s-prometheus-adapter/pull/46#discussion_r171883260
     - seriesQuery: 'airflow_task_status{namespace!="",service!=""}'
       resources:
         overrides:
@@ -14,7 +26,7 @@ data:
       name:
         matches: "^airflow_task_status"
         as: "airflow_task_status_running"
-      metricsQuery: 'sort(sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace, service) or up{<<.LabelMatchers>>} - 1)'
+      metricsQuery: 'max(sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace, service) or up{<<.LabelMatchers>>} - 1)'
       # Warning ! We would normally do something like sum(airflow_dag_status{status="running"}) here to get only the number of running tasks,
       # but the prometheus-adapter does not works this way as it's using the 'Element' field in the query response,
       # instead it returns a count of all the metrics matching the series pattern.

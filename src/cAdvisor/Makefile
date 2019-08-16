@@ -1,7 +1,4 @@
-all: cadvisor service_monitor
-
-service_monitor:
-	kubectl apply -f ./service_monitor.yaml
+all: cadvisor
 
 ns:
 	kubectl apply -f ./ns.yaml

@@ -675,23 +675,21 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "decimals": null,
+          "datasource": "airflow-prometheus",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
-            "w": 6,
+            "w": 15,
             "x": 0,
             "y": 14
           },
-          "id": 23,
+          "id": 6,
           "legend": {
-            "alignAsTable": false,
-            "avg": true,
+            "avg": false,
             "current": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
+            "max": false,
+            "min": false,
             "show": true,
             "total": false,
             "values": true
@@ -712,102 +710,8 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(airflow_task_status{status=~\"up_for_retry|up_for_reschedule|queued|running|scheduled|none\"}) / count(container_memory_usage_bytes{container_label_run=\"celery\"})",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "[HPA] Tasks count per celery worker",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "cacheTimeout": null,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "airflow-prometheus",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 10,
-            "w": 9,
-            "x": 6,
-            "y": 14
-          },
-          "id": 4,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null as zero",
-          "options": {
-            "dataLinks": [
-              {
-                "title": "",
-                "url": ""
-              }
-            ]
-          },
-          "percentage": false,
-          "pluginVersion": "6.3.2",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}[5m])) by (container_label_io_kubernetes_pod_name) /   sum(container_spec_cpu_quota{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}/container_spec_cpu_period{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}) by (container_label_io_kubernetes_pod_name) * 100",
-              "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
+              "expr": "count(container_memory_usage_bytes{container_label_run=\"celery\"})",
+              "format": "time_series",
               "refId": "B"
             }
           ],
@@ -815,7 +719,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "[CPU] Celery pods reservation / usage %",
+          "title": "Celery workers count",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -833,7 +737,7 @@ data:
           "yaxes": [
             {
               "format": "short",
-              "label": "",
+              "label": null,
               "logBase": 1,
               "max": null,
               "min": null,
@@ -862,7 +766,7 @@ data:
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 9,
+            "h": 6,
             "w": 9,
             "x": 15,
             "y": 14
@@ -945,28 +849,27 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "airflow-prometheus",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 5,
-            "w": 6,
+            "h": 7,
+            "w": 15,
             "x": 0,
             "y": 19
           },
-          "id": 6,
+          "id": 25,
           "legend": {
             "avg": false,
-            "current": true,
+            "current": false,
             "max": false,
             "min": false,
             "show": true,
             "total": false,
-            "values": true
+            "values": false
           },
           "lines": true,
           "linewidth": 1,
-          "nullPointMode": "null as zero",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -980,16 +883,16 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "count(container_memory_usage_bytes{container_label_run=\"celery\"})",
-              "format": "time_series",
-              "refId": "B"
+              "expr": "max(sum(airflow_task_status{status=~\"up_for_retry|up_for_reschedule|queued|running|scheduled|none\"}) by (namespace, service) / ignoring (namespace, service) group_left count(container_memory_usage_bytes{container_label_run=\"celery\"}) by (namespace, service) or up - 1) by (namespace, service)",
+              "legendFormat": "{{namespace}}-{{service}}",
+              "refId": "A"
             }
           ],
           "thresholds": [],
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Celery workers count",
+          "title": "[HPA] Tasks / celery worker",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1026,6 +929,101 @@ data:
             "align": false,
             "alignLevel": null
           }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "airflow-prometheus",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 9,
+            "x": 15,
+            "y": 20
+          },
+          "id": 4,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "options": {
+            "dataLinks": [
+              {
+                "title": "",
+                "url": ""
+              }
+            ]
+          },
+          "percentage": false,
+          "pluginVersion": "6.3.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}[5m])) by (container_label_io_kubernetes_pod_name) /   sum(container_spec_cpu_quota{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}/container_spec_cpu_period{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}) by (container_label_io_kubernetes_pod_name) * 100",
+              "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "[CPU] Celery pods reservation / usage %",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         }
       ],
       "refresh": "5s",
@@ -1036,7 +1034,7 @@ data:
         "list": []
       },
       "time": {
-        "from": "now-5m",
+        "from": "now-1m",
         "to": "now"
       },
       "timepicker": {
