@@ -18,6 +18,8 @@ data:
         as: "airflow_tasks_per_worker"
       metricsQuery: 'ceil(max(sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"}) by (namespace, service) / ignoring (namespace, service) group_left count(container_memory_usage_bytes{container_label_run="celery"}) by (namespace, service) or up - 1) by (namespace, service))'
       # https://github.com/DirectXMan12/k8s-prometheus-adapter/pull/46#discussion_r171883260
+      # https://github.com/prometheus/prometheus/issues/1503
+      # https://www.robustperception.io/using-group_left-to-calculate-label-proportions
     - seriesQuery: 'airflow_task_status{namespace!="",service!=""}'
       resources:
         overrides:
