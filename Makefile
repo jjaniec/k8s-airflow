@@ -11,6 +11,7 @@ all: deploy
 init:
 	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/airflow.ns.yaml
 	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/custom-metrics.ns.yaml
+	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/cadvisor.ns.yaml
 	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/gce.sc.yaml
 
 flannel:

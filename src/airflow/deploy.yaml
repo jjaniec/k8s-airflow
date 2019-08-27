@@ -19,60 +19,65 @@ spec:
         run: airflow
     spec:
       containers:
-      - image: tomwilkie/git-sync
-        name: git-sync
-        envFrom:
-        - secretRef:
-            name: git-sync-secrets
-        volumeMounts:
-          - name: airflow-dags
-            mountPath: /git
-        resources:
-          requests:
-            memory: 200Mi
-            cpu: 150m
-          limits:
-            memory: 500Mi
-            cpu: 300m
-      - image: jjaniec/airflow-exporter
-        name: airflow
-        resources:
-          requests:
-            cpu: 0.5
-            memory: "512Mi"
-          limits:
-            cpu: 1
-            memory: "2048Mi"
-        ports:
-          - containerPort: 8080
-            name: airflow-http
-        livenessProbe:
-          httpGet:
-            path: /api/experimental/test
-            port: 8080
-          initialDelaySeconds: 45
-          periodSeconds: 5
-        command:
-          - bash
-          - -c
-          - 'airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver'
-        envFrom:
-        - configMapRef:
-            name: airflow-env
-        - secretRef:
-            name: airflow-secrets
-        volumeMounts:
-          - readOnly: true
-            mountPath: /home/airflow/airflow/dags
-            name: airflow-dags
-          # - readOnly: true
-          #   name: airflow-cfg
-          #   mountPath: /home/airflow/airflow/airflow.cfg
-          #   subPath: airflow.cfg
+        - image: tomwilkie/git-sync
+          name: git-sync
+          envFrom:
+            - secretRef:
+                name: git-sync-secrets
+          volumeMounts:
+            - name: airflow-dags
+              mountPath: /git
+          resources:
+            requests:
+              memory: 200Mi
+              cpu: 150m
+            limits:
+              memory: 500Mi
+              cpu: 300m
+        - image: jjaniec/airflow-exporter
+          name: airflow
+          resources:
+            requests:
+              cpu: 0.5
+              memory: "512Mi"
+            limits:
+              cpu: 1
+              memory: "2048Mi"
+          ports:
+            - containerPort: 8080
+              name: airflow-http
+          livenessProbe:
+            httpGet:
+              path: /api/experimental/test
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 5
+          command:
+            - bash
+            - -c
+            - "airflow upgradedb; airflow users -c --username root --password toor --email root@root --role Admin --firstname root --lastname root; airflow scheduler & airflow webserver"
+          envFrom:
+            - configMapRef:
+                name: airflow-celery-env
+            - secretRef:
+                name: airflow-celery-env
+          volumeMounts:
+            - readOnly: true
+              mountPath: /home/airflow/airflow/dags
+              name: airflow-dags
+            # - readOnly: true
+            #   name: airflow-cfg
+            #   mountPath: /home/airflow/airflow/airflow.cfg
+            #   subPath: airflow.cfg
       initContainers:
         - image: mysql:5.7
           name: backend-liveness-check
-          command: ['sh', '-c', 'until mysqladmin ping -h $RESULT_BACKEND_ADDRESS -u root --password=toor; do echo Waiting for result backend to start; sleep 1; done;']
+          command:
+            [
+              "sh",
+              "-c",
+              "until mysqladmin ping -h $RESULT_BACKEND_ADDRESS -u root --password=toor; do echo Waiting for result backend to start; sleep 1; done;",
+            ]
           env:
             - name: RESULT_BACKEND_ADDRESS
               value: "result-backend"

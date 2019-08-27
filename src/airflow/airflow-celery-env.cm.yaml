@@ -1,20 +1,31 @@
 apiVersion: v1
 data:
+  # Airflow / Celery shared config variables
+
+  # Airflow core config, executor / dags folder / sql conn string / airflow parallelism
   AIRFLOW__CORE__EXECUTOR: CeleryExecutor
   AIRFLOW__CORE__DAGS_FOLDER: "/home/airflow/airflow/dags"
   AIRFLOW__CORE__SQL_ALCHEMY_CONN: "mysql://root:toor@result-backend:3306/airflow"
   AIRFLOW__CORE__PARALLELISM: "32"
 
+  # Remote logging of tasks
+  AIRFLOW__CORE__REMOTE_LOGGING: "False"
+  AIRFLOW__CORE__REMOTE_LOG_CONN_ID: "s3://bucket/keyprefix"
+  AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "s3://bucket/keyprefix"
+
+  # Celery core, conn strings / concurrency
   AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://root:toor@result-backend:3306/airflow
   AIRFLOW__CELERY__BROKER_URL: redis://broker:6379/1
   AIRFLOW__CELERY__WORKER_CONCURRENCY: "5"
 
+  # K8s config (not mandatory)
   AIRFLOW__KUBERNETES__NAMESPACE: airflow
   AIRLFOW__KUBERNETES__AIRFLOW_CONFIGMAP: airflow-cfg
   AIRFLOW__KUBERNETES__WORKER_SERVICE_ACCOUNT_NAME: airflow
   AIRFLOW__KUBERNETES__ENV_FROM_CONFIGMAP_REF: airflow-env
   AIRFLOW__KUBERNETES__ENV_FROM_SECRET_REF: airflow-secrets
 
+  # Intergrated git-sync (had issues with this !)
   # AIRFLOW__KUBERNETES__DAGS_VOLUME_CLAIM: airflow-dags
   # AIRFLOW__KUBERNETES__LOGS_VOLUME_CLAIM: airflow-logs
   # AIRFLOW__KUBERNETES__GIT_SUBPATH: dags
@@ -24,5 +35,5 @@ data:
 kind: ConfigMap
 metadata:
   creationTimestamp: null
-  name: airflow-env
+  name: airflow-celery-env
   namespace: airflow

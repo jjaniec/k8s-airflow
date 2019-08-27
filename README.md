@@ -4,6 +4,14 @@
 
 ## Installing
 
+- Edit the git-sync secret with your dags repository and credentials to allow access to airflow and celery sidecar containers
+
+```bash
+vim src/airflow/git-sync.secret.yaml
+```
+
+- Then apply the project in your cluster
+
 ```bash
 make
 ```
