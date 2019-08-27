@@ -5,7 +5,6 @@ data:
   # Airflow core config, executor / dags folder / sql conn string / airflow parallelism
   AIRFLOW__CORE__EXECUTOR: CeleryExecutor
   AIRFLOW__CORE__DAGS_FOLDER: "/home/airflow/airflow/dags"
-  AIRFLOW__CORE__SQL_ALCHEMY_CONN: "mysql://root:toor@result-backend:3306/airflow"
   AIRFLOW__CORE__PARALLELISM: "32"
 
   # Remote logging of tasks
@@ -14,8 +13,6 @@ data:
   AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "s3://bucket/keyprefix"
 
   # Celery core, conn strings / concurrency
-  AIRFLOW__CELERY__RESULT_BACKEND: db+mysql://root:toor@result-backend:3306/airflow
-  AIRFLOW__CELERY__BROKER_URL: redis://broker:6379/1
   AIRFLOW__CELERY__WORKER_CONCURRENCY: "5"
 
   # K8s config (not mandatory)

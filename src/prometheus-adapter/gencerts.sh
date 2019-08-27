@@ -26,7 +26,7 @@ export ALT_NAMES='"custom-metrics-apiserver.custom-metrics","custom-metrics-apis
 echo "{\"CN\":\"${SERVICE_NAME}\", \"hosts\": [${ALT_NAMES}], \"key\": {\"algo\": \"rsa\",\"size\": 2048}}" | \
        	cfssl gencert -ca=metrics-ca.crt -ca-key=metrics-ca.key -config=metrics-ca-config.json - | cfssljson -bare apiserver
 
-cat <<-EOF > adapter-serving-certs.cm.yaml
+cat <<-EOF > adapter-serving-certs.secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:

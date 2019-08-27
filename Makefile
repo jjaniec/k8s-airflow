@@ -6,7 +6,20 @@ KUBECTL_OPT=# -n $(NAMESPACE)
 
 SRC_DIR=src
 
-all: deploy
+all: \
+	init \
+	flannel \
+	airflow \
+	cadvisor \
+	celery \
+	flower \
+	grafana \
+	metrics-server \
+	mysql \
+	prometheus \
+	prometheus-operator \
+	prometheus-adapter \
+	redis
 
 init:
 	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/airflow.ns.yaml
@@ -17,45 +30,59 @@ init:
 flannel:
 	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
-airflow:
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f $(SRC_DIR)/mysql
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f $(SRC_DIR)/redis
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f $(SRC_DIR)/airflow
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f $(SRC_DIR)/flower
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f $(SRC_DIR)/celery
-
-metrics: custom-metrics-api-certs-cm
-	# $(KUBECTL) apply $(KUBECTL_OPT) -f src/metrics-server/
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f src/prometheus_operator
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f src/prometheus
-	@echo "Waiting for the Prometheus operators to create the TPRs/CRDs"
-	# while [[ $(kubectl get prometheus; echo $?) == 1 ]]; do sleep 1; done
-	$(KUBECTL) apply $(KUBECTL_OPT) -f src/prometheus-adapter
-	$(KUBECTL) apply $(KUBECTL_OPT) -R -f src/grafana
-
-custom-metrics-api-certs-cm:
-	make -C src/prometheus-adapter
-	# kubectl create secret generic -n custom-metrics --from-file src/prometheus-adapter/serving.key --from-file src/prometheus-adapter/serving.crt -o yaml --dry-run cm-adapter-serving-certs > src/prometheus-adapter/adapter-serving-certs.cm.yaml
+airflow: mysql redis
+	make -C src/airflow
 
 cadvisor:
-	make -C ./src/cadvisor all
+	make -C src/cAdvisor
 
-# src/prometheus-adapter/serving.key:
-# 	openssl req -x509 -sha256 -new -nodes -days 365 -newkey rsa:2048 -keyout src/prometheus-adapter/serving.key -out src/prometheus-adapter/serving.crt -subj "/CN=ca"
+celery: mysql redis
+	make -C src/celery
 
-deploy: init flannel airflow metrics cadvisor
-	# $(KUBECTL) apply $(KUBECTL_OPT) -f src/ingress.yaml
+flower: airflow mysql redis celery
+	make -C src/flower
+
+grafana: prometheus
+	make -C src/grafana
+
+metrics-server: prometheus-operator prometheus-adapter prometheus
+	make -C src/metrics-server
+
+mysql:
+	make -C src/mysql
+
+prometheus:
+	make -C src/prometheus
+
+prometheus-operator:
+	make -C src/prometheus-operator
+	@echo "Waiting for the Prometheus operators to create the TPRs/CRDs"
+	while [[ $$(kubectl get prometheus; echo $$?) == 1 ]]; do sleep 1; done
+
+prometheus-adapter:
+	make -C src/prometheus-adapter
+
+redis:
+	make -C src/redis
 
 clean:
 	make -C src/prometheus-adapter clean
+	@# for dir in prometheus-adapter;
+	@# do
+	@# 	make -C src/$${dir} clean
+	@# done;
 
 fclean: clean
-	kubectl delete all --all -n airflow
-	kubectl delete all --all -n custom-metrics
-	make -C src/cadvisor fclean
-	# rm -rf src/prometheus-adapter/serving.key src/prometheus-adapter/serving.crt
+	for dir in airflow cadvisor celery flower grafana metrics-server mysql prometheus prometheus-operator prometheus-adapter redis;
+	do
+		make -C src/$${dir} fclean
+	done;
+	for dir in airflow cadvisor custom-metrics;
+	do
+		kubectl delete -f src/$${dir}
+	done;
 
 re: fclean all
 
-tests: deploy
+tests: all
 	echo "TODO"

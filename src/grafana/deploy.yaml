@@ -19,37 +19,34 @@ spec:
         run: grafana
     spec:
       containers:
-      - image: grafana/grafana
-        name: grafana
-        resources:
-          requests:
-            cpu: 0.25
-            memory: "512Mi"
-          limits:
-            cpu: 0.5
-            memory: "1024Mi"
-        ports:
-          - containerPort: 3000
-            name: grafana-http
-        livenessProbe:
-          httpGet:
-            path: /
-            port: grafana-http
-          initialDelaySeconds: 20
-          periodSeconds: 5
-        volumeMounts:
-          - name: dashboards
-            mountPath: /etc/grafana/provisioning/dashboards/dashboards.yaml
-            subPath: dashboards.yaml
-          - name: airflow-dashboard
-            mountPath: /etc/grafana/dashboards/airflow.json
-            subPath: airflow.json
-          - name: kubernetes-airflow-dashboard
-            mountPath: /etc/grafana/dashboards/kubernetes-airflow.json
-            subPath: kubernetes-airflow.json
-          - name: datasources
-            mountPath: /etc/grafana/provisioning/datasources/prometheus.yaml
-            subPath: prometheus.yaml
+        - image: grafana/grafana
+          name: grafana
+          resources:
+            requests:
+              cpu: 0.25
+              memory: "512Mi"
+            limits:
+              cpu: 0.5
+              memory: "1024Mi"
+          ports:
+            - containerPort: 3000
+              name: grafana-http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: grafana-http
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          volumeMounts:
+            - name: dashboards
+              mountPath: /etc/grafana/provisioning/dashboards/dashboards.yaml
+              subPath: dashboards.yaml
+            - name: airflow-dashboard
+              mountPath: /etc/grafana/dashboards/airflow.json
+              subPath: airflow.json
+            - name: datasources
+              mountPath: /etc/grafana/provisioning/datasources/prometheus.yaml
+              subPath: prometheus.yaml
       volumes:
         - name: dashboards
           configMap:
@@ -57,9 +54,6 @@ spec:
         - name: airflow-dashboard
           configMap:
             name: grafana-airflow-dashboard
-        - name: kubernetes-airflow-dashboard
-          configMap:
-            name: grafana-kubernetes-airflow-dashboard
         - name: datasources
           configMap:
             name: grafana-datasources
