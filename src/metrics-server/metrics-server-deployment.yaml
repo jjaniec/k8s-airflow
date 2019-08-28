@@ -24,14 +24,17 @@ spec:
     spec:
       serviceAccountName: metrics-server
       volumes:
-      # mount in tmp so we can safely use from-scratch images and/or read-only containers
-      - name: tmp-dir
-        emptyDir: {}
-      containers:
-      - name: metrics-server
-        image: k8s.gcr.io/metrics-server-amd64:v0.3.3
-        imagePullPolicy: Always
-        volumeMounts:
+        # mount in tmp so we can safely use from-scratch images and/or read-only containers
         - name: tmp-dir
-          mountPath: /tmp
-
+          emptyDir: {}
+      containers:
+        - name: metrics-server
+          image: k8s.gcr.io/metrics-server-amd64:v0.3.3
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: tmp-dir
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: 25m
+              memory: 50Mi

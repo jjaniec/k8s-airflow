@@ -66,6 +66,7 @@ data:
           "targets": [
             {
               "expr": "sum(rate(container_cpu_usage_seconds_total{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}[5m])) by (container_label_io_kubernetes_pod_name) /sum(container_spec_cpu_quota{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}/container_spec_cpu_period{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}) by (container_label_io_kubernetes_pod_name) * 100",
+              "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
               "refId": "A"
             }
           ],
@@ -544,7 +545,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "aliasColors": {},
@@ -1034,10 +1035,11 @@ data:
         "list": []
       },
       "time": {
-        "from": "now-1m",
-        "to": "now"
+        "from": "now-5m",
+        "to": "now-15s"
       },
       "timepicker": {
+        "nowDelay": "15s",
         "refresh_intervals": [
           "5s",
           "10s",

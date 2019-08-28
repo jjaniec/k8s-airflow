@@ -11,12 +11,19 @@ spec:
   serviceMonitorSelector:
     matchLabels:
       app: service-monitor
-    # matchLabels:
-      # monitors: airflow
+  resources:
+    requests:
+      cpu: 0.25
+      memory: "500Mi"
+    limits:
+      cpu: 1
+      memory: "2000Mi"
+  # matchLabels:
+  # monitors: airflow
   serviceMonitorNamespaceSelector:
     matchNames:
-    - airflow
-    - cadvisor
+      - airflow
+      - cadvisor
   # alerting:
   #   alertmanagers:
   #   - namespace: airflow

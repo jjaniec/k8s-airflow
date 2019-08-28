@@ -21,6 +21,8 @@ spec:
       containers:
         - image: tomwilkie/git-sync
           name: git-sync
+          args:
+            - -wait=60
           envFrom:
             - secretRef:
                 name: git-sync-secrets

@@ -19,10 +19,13 @@ spec:
         run: redis
     spec:
       containers:
-      - image: redis:alpine
-        name: redis
-        ports:
-          - containerPort: 6379
-        resources: {}
+        - image: redis:alpine
+          name: redis
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
       priorityClassName: redis
 status: {}

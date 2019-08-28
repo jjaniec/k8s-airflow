@@ -14,12 +14,12 @@ all: \
 	celery \
 	flower \
 	grafana \
-	metrics-server \
 	mysql \
 	prometheus \
 	prometheus-operator \
 	prometheus-adapter \
-	redis
+	redis \
+	metrics-server
 
 init:
 	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/airflow.ns.yaml
@@ -45,7 +45,7 @@ flower: airflow mysql redis celery
 grafana: prometheus
 	make -C src/grafana
 
-metrics-server: prometheus-operator prometheus-adapter prometheus
+metrics-server: prometheus-adapter
 	make -C src/metrics-server
 
 mysql:
@@ -54,30 +54,30 @@ mysql:
 prometheus:
 	make -C src/prometheus
 
-prometheus-operator:
+prometheus-operator: prometheus
 	make -C src/prometheus-operator
 	@echo "Waiting for the Prometheus operators to create the TPRs/CRDs"
 	while [[ $$(kubectl get prometheus; echo $$?) == 1 ]]; do sleep 1; done
 
-prometheus-adapter:
+prometheus-adapter: prometheus
 	make -C src/prometheus-adapter
 
 redis:
 	make -C src/redis
 
 clean:
-	make -C src/prometheus-adapter clean
-	@# for dir in prometheus-adapter;
-	@# do
-	@# 	make -C src/$${dir} clean
-	@# done;
+	#make -C src/prometheus-adapter clean
+	for dir in "prometheus-adapter";
+	do
+		make -C src/$${dir} clean
+	done;
 
 fclean: clean
-	for dir in airflow cadvisor celery flower grafana metrics-server mysql prometheus prometheus-operator prometheus-adapter redis;
+	for dir in "airflow cadvisor celery flower grafana metrics-server mysql prometheus prometheus-operator prometheus-adapter redis";
 	do
 		make -C src/$${dir} fclean
 	done;
-	for dir in airflow cadvisor custom-metrics;
+	for dir in "airflow cadvisor custom-metrics";
 	do
 		kubectl delete -f src/$${dir}
 	done;

@@ -20,20 +20,23 @@ spec:
     spec:
       priorityClassName: mysql
       containers:
-      - image: mysql:5.7
-        name: mysql
-        resources: {}
-        ports:
-          - containerPort: 3306
-        args:
-          - "--explicit-defaults-for-timestamp=1"
-        env:
-        - name: MYSQL_DATABASE
-          value: airflow
-        - name: MYSQL_ROOT_PASSWORD
-          value: toor
-        - name: MYSQL_USERNAME
-          value: user
-        - name: MYSQL_PASSWORD
-          value: password
+        - image: mysql:5.7
+          name: mysql
+          resources:
+            requests:
+              cpu: 300m
+              memory: 500Mi
+          ports:
+            - containerPort: 3306
+          args:
+            - "--explicit-defaults-for-timestamp=1"
+          env:
+            - name: MYSQL_DATABASE
+              value: airflow
+            - name: MYSQL_ROOT_PASSWORD
+              value: toor
+            - name: MYSQL_USERNAME
+              value: user
+            - name: MYSQL_PASSWORD
+              value: password
 status: {}

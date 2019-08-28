@@ -15,11 +15,12 @@ spec:
       app: cadvisor
   namespaceSelector:
     matchNames:
-    - cadvisor
-  endpoints: 
-  - port: cadvisor-http
-    honorLabels: true
-    targetPort: cadvisor-http
-    name: cadvisor-http
-    interval: 5s
-    path: /metrics
+      - cadvisor
+  endpoints:
+    - port: cadvisor-http
+      honorLabels: true
+      targetPort: cadvisor-http
+      name: cadvisor-http
+      interval: 10s
+      timeout: 10s
+      path: /metrics

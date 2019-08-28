@@ -4,7 +4,7 @@ metadata:
   name: cadvisor
   namespace: cadvisor
   annotations:
-      seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
+    seccomp.security.alpha.kubernetes.io/pod: "docker/default"
 spec:
   selector:
     matchLabels:
@@ -17,68 +17,68 @@ spec:
     spec:
       serviceAccountName: cadvisor
       containers:
-      - name: cadvisor
-        image: k8s.gcr.io/cadvisor:v0.30.2
-        # args:
-        # - --disable-metrics=disk
-        # resources:
-        #   requests:
-        #     memory: 200Mi
-        #     cpu: 150m
-        #   limits:
-        #     memory: 2000Mi
-        #     cpu: 300m
-        volumeMounts:
-        - name: rootfs
-          mountPath: /rootfs
-          readOnly: true
-        - name: var-run
-          mountPath: /var/run
-          readOnly: true
-        - name: sys
-          mountPath: /sys
-          readOnly: true
-        - name: docker
-          mountPath: /var/lib/docker
-          readOnly: true
-        - name: disk
-          mountPath: /dev/disk
-          readOnly: true
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: cadvisor-http
-            scheme: HTTP
-          initialDelaySeconds: 60
-          periodSeconds: 5
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: cadvisor-http
-            scheme: HTTP
-          initialDelaySeconds: 20
-          periodSeconds: 5
-        args:
-          - --disable_metrics=disk
-        ports:
-          - name: cadvisor-http
-            containerPort: 8080
-            protocol: TCP
+        - name: cadvisor
+          image: k8s.gcr.io/cadvisor:v0.30.2
+          # args:
+          # - --disable-metrics=disk
+          resources:
+            requests:
+              memory: 350Mi
+              cpu: 200m
+            limits:
+              memory: 2000Mi
+              cpu: 1000m
+          volumeMounts:
+            - name: rootfs
+              mountPath: /rootfs
+              readOnly: true
+            - name: var-run
+              mountPath: /var/run
+              readOnly: true
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+            - name: docker
+              mountPath: /var/lib/docker
+              readOnly: true
+            - name: disk
+              mountPath: /dev/disk
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: cadvisor-http
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: cadvisor-http
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          args:
+            - --disable_metrics=disk
+          ports:
+            - name: cadvisor-http
+              containerPort: 8080
+              protocol: TCP
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 30
       volumes:
-      - name: rootfs
-        hostPath:
-          path: /
-      - name: var-run
-        hostPath:
-          path: /var/run
-      - name: sys
-        hostPath:
-          path: /sys
-      - name: docker
-        hostPath:
-          path: /var/lib/docker
-      - name: disk
-        hostPath:
-          path: /dev/disk
+        - name: rootfs
+          hostPath:
+            path: /
+        - name: var-run
+          hostPath:
+            path: /var/run
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: docker
+          hostPath:
+            path: /var/lib/docker
+        - name: disk
+          hostPath:
+            path: /dev/disk
