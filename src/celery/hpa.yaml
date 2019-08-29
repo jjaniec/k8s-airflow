@@ -18,7 +18,7 @@ spec:
         kind: Service
         name: airflow
       metricName: airflow_tasks_per_worker
-      averageValue: 1 # Used for a scaling in trigger
+      averageValue: 2 # Used for a scaling in trigger
       targetValue: 5 # Scale out
 
   # - type: Pods

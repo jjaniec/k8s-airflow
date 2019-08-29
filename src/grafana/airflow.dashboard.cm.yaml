@@ -22,7 +22,7 @@ data:
       },
       "editable": true,
       "gnetId": null,
-      "graphTooltip": 0,
+      "graphTooltip": 1,
       "links": [],
       "panels": [
         {
@@ -65,7 +65,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}[5m])) by (container_label_io_kubernetes_pod_name) /sum(container_spec_cpu_quota{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}/container_spec_cpu_period{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}) by (container_label_io_kubernetes_pod_name) * 100",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_name!=\"POD\",container_label_io_kubernetes_pod_name!=\"\"}[1m])) by (container_label_io_kubernetes_pod_name) /sum(container_spec_cpu_quota{container_label_io_kubernetes_pod_name!=\"POD\",container_label_io_kubernetes_pod_name!=\"\"}/container_spec_cpu_period{container_label_io_kubernetes_pod_name!=\"POD\",container_label_io_kubernetes_pod_name!=\"\"}) by (container_label_io_kubernetes_pod_name) * 100",
               "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
               "refId": "A"
             }
@@ -154,7 +154,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sort_desc(sum(container_memory_working_set_bytes{name!~\"POD\",container_label_io_kubernetes_pod_name!=\"\"}) by (container_label_io_kubernetes_pod_name))",
+              "expr": "sum(container_memory_working_set_bytes{container_label_io_kubernetes_pod_name!=\"POD\",container_label_io_kubernetes_pod_name!=\"\"}) by (container_label_io_kubernetes_pod_name)",
               "instant": false,
               "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
               "refId": "A"
@@ -354,7 +354,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{name!~\".*prometheus.*\", image!=\"\", container_name!=\"POD\"}[5m])) by (pod_name, container_name) /\nsum(container_spec_cpu_quota{name!~\".*prometheus.*\", image!=\"\", container_name!=\"POD\"}/container_spec_cpu_period{name!~\".*prometheus.*\", image!=\"\", container_name!=\"POD\"}) by (pod_name, container_name) * 100",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{name!~\".*prometheus.*\", image!=\"\", container_name!=\"POD\"}[1m])) by (pod_name, container_name) /\nsum(container_spec_cpu_quota{name!~\".*prometheus.*\", image!=\"\", container_name!=\"POD\"}/container_spec_cpu_period{name!~\".*prometheus.*\", image!=\"\", container_name!=\"POD\"}) by (pod_name, container_name) * 100",
               "legendFormat": "",
               "refId": "A"
             }
@@ -659,12 +659,290 @@ data:
           }
         },
         {
-          "collapsed": false,
+          "collapsed": true,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
             "y": 13
+          },
+          "id": 27,
+          "panels": [
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "airflow-prometheus",
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 8,
+                "w": 10,
+                "x": 0,
+                "y": 14
+              },
+              "id": 28,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "null",
+              "options": {
+                "dataLinks": []
+              },
+              "percentage": false,
+              "pointradius": 2,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_container_name!=\"POD\",container_label_io_kubernetes_container_name!=\"\"}[1m])) by (container_label_io_kubernetes_container_name) /sum(container_spec_cpu_quota{container_label_io_kubernetes_container_name!=\"POD\",container_label_io_kubernetes_container_name!=\"\"}/container_spec_cpu_period{container_label_io_kubernetes_container_name!=\"POD\",container_label_io_kubernetes_container_name!=\"\"}) by (container_label_io_kubernetes_container_name) * 100",
+                  "legendFormat": "{{container_label_io_kubernetes_container_name}}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "[CPU] Containers reserved / used %",
+              "tooltip": {
+                "shared": false,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "transparent": true,
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "airflow-prometheus",
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 8,
+                "w": 9,
+                "x": 10,
+                "y": 14
+              },
+              "id": 29,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "hideEmpty": false,
+                "hideZero": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "null as zero",
+              "options": {
+                "dataLinks": []
+              },
+              "percentage": false,
+              "pointradius": 2,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "expr": "sort_desc(sum(container_memory_working_set_bytes{container_label_io_kubernetes_container_name!=\"POD\",container_label_io_kubernetes_container_name!=\"\"}) by (container_label_io_kubernetes_container_name))",
+                  "instant": false,
+                  "legendFormat": "{{container_label_io_kubernetes_container_name}}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "[MEM] Containers mem usage bytes",
+              "tooltip": {
+                "shared": false,
+                "sort": 1,
+                "value_type": "individual"
+              },
+              "transparent": true,
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 8,
+                "w": 5,
+                "x": 19,
+                "y": 14
+              },
+              "id": 30,
+              "legend": {
+                "avg": false,
+                "current": false,
+                "max": false,
+                "min": false,
+                "show": true,
+                "total": false,
+                "values": false
+              },
+              "lines": true,
+              "linewidth": 1,
+              "nullPointMode": "null",
+              "options": {
+                "dataLinks": []
+              },
+              "percentage": false,
+              "pointradius": 2,
+              "points": false,
+              "renderer": "flot",
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "expr": "sort_desc(sum(container_memory_swap) by (container_label_io_kubernetes_pod_name))",
+                  "interval": "",
+                  "legendFormat": "{{container_label_io_kubernetes_container_name}}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "[SWAP] Swap size bytes",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "transparent": true,
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            }
+          ],
+          "title": "Containers resources usage",
+          "type": "row"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 14
           },
           "id": 12,
           "panels": [],
@@ -683,7 +961,7 @@ data:
             "h": 5,
             "w": 15,
             "x": 0,
-            "y": 14
+            "y": 15
           },
           "id": 6,
           "legend": {
@@ -770,7 +1048,7 @@ data:
             "h": 6,
             "w": 9,
             "x": 15,
-            "y": 14
+            "y": 15
           },
           "id": 10,
           "legend": {
@@ -856,7 +1134,7 @@ data:
             "h": 7,
             "w": 15,
             "x": 0,
-            "y": 19
+            "y": 20
           },
           "id": 25,
           "legend": {
@@ -944,7 +1222,7 @@ data:
             "h": 6,
             "w": 9,
             "x": 15,
-            "y": 20
+            "y": 21
           },
           "id": 4,
           "legend": {
@@ -979,7 +1257,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}[5m])) by (container_label_io_kubernetes_pod_name) /   sum(container_spec_cpu_quota{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}/container_spec_cpu_period{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}) by (container_label_io_kubernetes_pod_name) * 100",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}[1m])) by (container_label_io_kubernetes_pod_name) /   sum(container_spec_cpu_quota{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}/container_spec_cpu_period{container_label_io_kubernetes_pod_namespace=~\"airflow\",container_label_io_kubernetes_pod_name=~\"celery-.*\",container_label_io_kubernetes_container_name=\"celery\"}) by (container_label_io_kubernetes_pod_name) * 100",
               "legendFormat": "{{container_label_io_kubernetes_pod_name}}",
               "refId": "B"
             }
@@ -988,7 +1266,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "[CPU] Celery pods reservation / usage %",
+          "title": "[CPU] [1m avg] celery pods reservation / usage %",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1027,7 +1305,7 @@ data:
           }
         }
       ],
-      "refresh": "5s",
+      "refresh": false,
       "schemaVersion": 19,
       "style": "dark",
       "tags": [],
@@ -1035,7 +1313,7 @@ data:
         "list": []
       },
       "time": {
-        "from": "now-5m",
+        "from": "now-30m",
         "to": "now-15s"
       },
       "timepicker": {

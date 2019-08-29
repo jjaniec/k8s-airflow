@@ -1,0 +1,15 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+  namespace: airflow
+  labels:
+    provisioner: kubernetes.io/aws-ebs
+    addonmanager.kubernetes.io/mode: EnsureExists
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+mountOptions:
+  - debug
+# reclaimPolicy: Retain
+volumeBindingMode: Immediate

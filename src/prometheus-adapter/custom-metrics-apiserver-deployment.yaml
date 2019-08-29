@@ -6,7 +6,7 @@ metadata:
   name: custom-metrics-apiserver
   namespace: custom-metrics
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: custom-metrics-apiserver

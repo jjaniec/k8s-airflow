@@ -31,17 +31,17 @@ spec:
               mountPath: /git
           resources:
             requests:
-              memory: 200Mi
-              cpu: 150m
+              memory: 50Mi
+              cpu: 20m
             limits:
               memory: 500Mi
-              cpu: 300m
+              cpu: 200m
         - image: jjaniec/airflow-exporter
           name: airflow
           resources:
             requests:
               cpu: 0.5
-              memory: "512Mi"
+              memory: "800Mi"
             limits:
               cpu: 1
               memory: "2048Mi"

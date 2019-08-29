@@ -13,7 +13,7 @@ spec:
       app: service-monitor
   resources:
     requests:
-      cpu: 0.25
+      cpu: 0.15
       memory: "500Mi"
     limits:
       cpu: 1

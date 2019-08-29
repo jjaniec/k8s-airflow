@@ -1,86 +1,95 @@
+SHELL := /bin/bash
+
 PROM_OPERATOR_NAMESPACE?=airflow
 KUBECTL=kubectl
 
 NAMESPACE=airflow
 KUBECTL_OPT=# -n $(NAMESPACE)
 
-SRC_DIR=src
+SRC=src
 
-all: \
-	init \
-	flannel \
-	airflow \
-	cadvisor \
-	celery \
-	flower \
-	grafana \
-	mysql \
-	prometheus \
-	prometheus-operator \
-	prometheus-adapter \
-	redis \
-	metrics-server
+SRC_SUBDIRS =	airflow \
+				cadvisor \
+				celery \
+				flower \
+				grafana \
+				mysql \
+				prometheus \
+				prometheus-operator \
+				prometheus-adapter \
+				redis \
+				metrics-server
+
+
+all: init flannel $(SRC_SUBDIRS)
 
 init:
-	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/airflow.ns.yaml
-	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/custom-metrics.ns.yaml
-	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/cadvisor.ns.yaml
-	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC_DIR)/gce.sc.yaml
+	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC)/airflow.ns.yaml
+	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC)/custom-metrics.ns.yaml
+	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC)/cadvisor.ns.yaml
+	$(KUBECTL) apply $(KUBECTL_OPT) -f $(SRC)/gce.sc.yaml
 
 flannel:
 	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 airflow: mysql redis
-	make -C src/airflow
+	make -C $(SRC)/airflow
 
 cadvisor:
-	make -C src/cAdvisor
+	make -C $(SRC)/cAdvisor
 
 celery: mysql redis
-	make -C src/celery
+	make -C $(SRC)/celery
 
 flower: airflow mysql redis celery
-	make -C src/flower
+	make -C $(SRC)/flower
 
 grafana: prometheus
-	make -C src/grafana
+	make -C $(SRC)/grafana
 
-metrics-server: prometheus-adapter
-	make -C src/metrics-server
+metrics-server:
+	make -C $(SRC)/metrics-server
 
 mysql:
-	make -C src/mysql
+	make -C $(SRC)/mysql
 
-prometheus:
-	make -C src/prometheus
+prometheus: prometheus-operator
+	make -C $(SRC)/prometheus
 
-prometheus-operator: prometheus
-	make -C src/prometheus-operator
+prometheus-operator:
+	make -C $(SRC)/prometheus-operator
 	@echo "Waiting for the Prometheus operators to create the TPRs/CRDs"
 	while [[ $$(kubectl get prometheus; echo $$?) == 1 ]]; do sleep 1; done
 
-prometheus-adapter: prometheus
-	make -C src/prometheus-adapter
+prometheus-adapter: prometheus-operator prometheus metrics-server
+	make -C $(SRC)/prometheus-adapter
 
 redis:
-	make -C src/redis
+	make -C $(SRC)/redis
 
 clean:
-	#make -C src/prometheus-adapter clean
-	for dir in "prometheus-adapter";
-	do
-		make -C src/$${dir} clean
-	done;
+	make -C $(SRC)/prometheus-adapter clean
 
-fclean: clean
-	for dir in "airflow cadvisor celery flower grafana metrics-server mysql prometheus prometheus-operator prometheus-adapter redis";
-	do
-		make -C src/$${dir} fclean
-	done;
-	for dir in "airflow cadvisor custom-metrics";
-	do
-		kubectl delete -f src/$${dir}
-	done;
+# for dir in prometheus-adapter;
+# do
+# 	make -C src/$${dir} clean
+# done;
+
+fclean:
+	@SRC_SUBDIRS="$(SRC_SUBDIRS)"
+	@SRC=$(SRC)
+	for d in ${SRC_SUBDIRS}; do echo $${d}; make -C ${SRC}/$${d} fclean; done;
+
+	$(KUBECTL) delete all --all -n custom-metrics
+	$(KUBECTL) delete $(KUBECTL_OPT) -f $(SRC)/custom-metrics.ns.yaml
+
+	$(KUBECTL) delete all --all -n airflow
+	$(KUBECTL) delete $(KUBECTL_OPT) -f $(SRC)/airflow.ns.yaml
+
+	$(KUBECTL) delete all --all -n cadvisor
+	$(KUBECTL) delete $(KUBECTL_OPT) -f $(SRC)/cadvisor.ns.yaml
+
+	$(KUBECTL) delete $(KUBECTL_OPT) -f $(SRC)/gce.sc.yaml
 
 re: fclean all
 

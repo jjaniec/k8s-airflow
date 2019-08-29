@@ -8,9 +8,14 @@ data:
   AIRFLOW__CORE__PARALLELISM: "32"
 
   # Remote logging of tasks
-  AIRFLOW__CORE__REMOTE_LOGGING: "False"
+  AIRFLOW__CORE__REMOTE_LOGGING: "False" # "True"
   AIRFLOW__CORE__REMOTE_LOG_CONN_ID: "s3://bucket/keyprefix"
   AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "s3://bucket/keyprefix"
+
+  # When using s3 out of EKS with a role allowing access to your bucket,
+  # remember to set these in the secret file !
+  AWS_ACCESS_KEY_ID: ""
+  AWS_SECRET_ACCESS_KEY: ""
 
   # Celery core, conn strings / concurrency
   AIRFLOW__CELERY__WORKER_CONCURRENCY: "5"
