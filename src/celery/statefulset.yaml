@@ -40,7 +40,7 @@ spec:
           name: celery
           resources:
             requests:
-              cpu: 0.9
+              cpu: 1
               memory: "900Mi"
             limits:
               cpu: 1.5

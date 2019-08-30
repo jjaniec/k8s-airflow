@@ -45,24 +45,36 @@ By default, the metric used by the hpa to scale celery pods is the `airflow_task
 
 ```
 (number of pending tasks) / (celery workers count)
+```
 
-OR in PromQL:
+With the following PromQL query:
+
+```PromQL
 ceil(
     max(
         sum(airflow_task_status{<<.LabelMatchers>>,status=~"up_for_retry|up_for_reschedule|queued|running|scheduled|none"})
         by (namespace, service)
         / ignoring (namespace, service) group_left count(container_memory_usage_bytes{container_label_run="celery"})
         by (namespace, service)
-        or up - 1)
+        or count(up{namespace="airflow", service="airflow"})
+        by (namespace, service) - 1)
     by (namespace, service)
 )
 ```
 
-Tasks are fetched and results are stored on local `redis` & `mysql` deployments
+(The count part is only here so the hpa can get a `0` value if the `airflow_task_status` vector is empty instead of an empty reply, which is badly interpreted and can lead to scaling out the worker nodes if no tasks are running)
+
+Tasks are fetched and results are stored on local `redis` & `mysql` deployments and tasks logs can be exported in an s3 bucket by setting the `AIRFLOW__CORE__REMOTE_LOGGING`, `AIRFLOW__CORE__REMOTE_LOG_CONN_ID` and `AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER` variables in the `airflow/airflow-celery-env.cm.yaml` file.
 
 ### Grafana
 
-A simple grafana server will be deployed fetching metrics from the prometheus server, with a base dashboard containing cpu / memory and autoscaling metrics from the airflow cluster
+A simple grafana server will be deployed fetching metrics from the prometheus server, with a base dashboard containing cpu / memory and autoscaling metrics from the airflow cluster.
+
+Screenshots of the scaling process with max nodes set to 7 in a gke node pool of 2vCPU / 7.5G RAM instances:
+
+[ ![./img/dashboard1.png](./img/dashboard1.png) ](./img/dashboard1.png)
+
+[ ![./img/dashboard2.png](./img/dashboard2.png) ](./img/dashboard2.png)
 
 ### cAdvisor
 
